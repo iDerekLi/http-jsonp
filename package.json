@@ -1,0 +1,33 @@
+{
+  "name": "http-jsonp",
+  "version": "0.0.1",
+  "description": "A JSONP cross-domain request library",
+  "main": "http-jsonp.js",
+  "files": [
+    "package.json",
+    "LICENSE",
+    "README.md",
+    "http-jsonp.js"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iDerekLi/http-jsonp.git"
+  },
+  "keywords": [
+    "jsonp",
+    "xhr",
+    "http",
+    "ajax",
+    "json",
+    "javascript"
+  ],
+  "author": "Derek Li",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iDerekLi/http-jsonp/issues"
+  },
+  "homepage": "https://github.com/iDerekLi/http-jsonp#readme"
+}
