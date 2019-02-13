@@ -1,5 +1,8 @@
 .DS_Store
 node_modules
+examples
+babel.config.js
+rollup.config.js
 .*
 
 # Log files

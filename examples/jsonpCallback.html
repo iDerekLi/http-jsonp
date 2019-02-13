@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JSONP Callback</title>
+</head>
+<body>
+<script src="../dist/http-jsonp.js"></script>
+<script>
+  /* JSONP Callback */
+  httpJsonp({
+    baseURL: "./",
+    url: "./jsonpdata.js",
+    params: {
+      callback: "__httpJsonpCallback001"
+    },
+    callbackProp: "callback",
+    callback: function(data) {
+      console.log("callback", data);
+    },
+    load: function() {
+      console.log("load");
+    },
+    error: function(err) {
+      console.log(err);
+    }
+  });
+</script>
+</body>
+</html>
