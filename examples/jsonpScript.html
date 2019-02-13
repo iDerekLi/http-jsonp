@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JSONP Script</title>
+</head>
+<body>
+<script src="../dist/http-jsonp.js"></script>
+<script>
+  /* JSONP Script */
+  httpJsonp({
+    baseURL: "./",
+    url: "./script.js",
+    params: {
+      v: "1.0"
+    },
+    callbackProp: false,
+    scriptAttr: {
+      type: "text/javascript"
+    },
+    load: function() {
+      console.log("load", TestScript);
+    },
+    error: function(err) {
+      console.log(err);
+    }
+  });
+</script>
+</body>
+</html>
