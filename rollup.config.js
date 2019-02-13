@@ -10,7 +10,7 @@ const pkg = require("./package.json");
 
 const banner = (function() {
   const row = [
-    `http-jsonp v${pkg.version}`,
+    `httpJsonp v${pkg.version}`,
     "",
     "Copyright (c) 2019-present Derek Li",
     "Released under the MIT License - https://choosealicense.com/licenses/mit/",
