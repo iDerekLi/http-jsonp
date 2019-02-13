@@ -1,5 +1,5 @@
 /*!
- * httpJsonp v1.0.0
+ * httpJsonp v1.0.1
  * 
  * Copyright (c) 2019-present Derek Li
  * Released under the MIT License - https://choosealicense.com/licenses/mit/

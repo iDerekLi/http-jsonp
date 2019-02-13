@@ -1,6 +1,6 @@
 {
   "name": "http-jsonp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A JSONP cross-origin request library",
   "main": "dist/http-jsonp.js",
   "module": "dist/http-jsonp.esm.js",
@@ -53,8 +53,5 @@
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-terser": "^4.0.3",
     "rollup-watch": "^4.3.1"
-  },
-  "dependencies": {
-    "@babel/polyfill": "^7.2.5"
   }
 }
