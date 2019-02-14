@@ -24,14 +24,17 @@ A JSONP cross-origin request library
 Using npm:
 
 ```shell
-$ npm install http-jsonp -save
+$ npm install http-jsonp
 ```
+
 or Yarn:
+
 ```shell
 $ yarn add http-jsonp
 ```
 
 Using cdn:
+
 ```html
 <script type="text/javascript" src="https://unpkg.com/http-jsonp/dist/http-jsonp.min.js"></script>
 ```
@@ -47,7 +50,7 @@ httpJsonp({
   url: "/user",
   params: {
     ID: 123456
-    },
+  },
   callback: function(data) {
     console.log("callback", data);
   },
