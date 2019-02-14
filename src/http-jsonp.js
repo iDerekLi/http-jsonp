@@ -1,12 +1,12 @@
-import { deepMerge, queryParams } from "./utils";
+import { deepMerge, treeAttribute, queryParams } from "./utils";
 
 const DEFAULT_OPTS = {
   baseURL: "", // 将被添加到`url`
   url: "", // 是将用于请求的服务器URL
   params: {}, // 请求服务器url所带参数（包括callback行为）
   callbackProp: "callback", // 指定`params`中哪一个键是callback行为接口，（如果指定`params`中的键值存在则指定的值覆盖httpJsonp默认随机名称）
-  prefix: "__httpJsonp", // callback名称的前缀
-  name: "Callback", // callback名称，（callbackName=`prefix`+`name`+`随机数`）
+  callbackNamespase: "__httpJsonpCallback", // window.callbackNamespase
+  callbackName: "", // callback名称，（callbackName=jp随机数）
   timeout: 60000, // 指定请求超时之前的毫秒数。
   // 脚本属性参数
   scriptAttr: {
@@ -35,9 +35,15 @@ function noop() {}
 /**
  * Script event
  */
-const script_oncallback = function(funName, cb) {
-  if (!cb) return window[funName];
-  window[funName] = cb;
+const script_oncallback = function(namespase, funName, cb) {
+  let target = treeAttribute(window, namespase);
+  if (!!namespase && !target) {
+    target = treeAttribute(window, namespase, {});
+  } else {
+    target = target || window;
+  }
+  if (!cb) return target[funName];
+  target[funName] = cb;
 };
 const script_onload = function(script, cb) {
   if (script.onload !== undefined) {
@@ -80,15 +86,18 @@ function httpJsonp(options, receive) {
   let state = "";
 
   let callbackName = "";
+  const callbackNamespase = opts.callbackNamespase;
   const callbackProp = opts.callbackProp;
   if (!!callbackProp && params[callbackProp] !== "") {
     // create callback
     if (!params[callbackProp]) {
-      callbackName = opts.callbackName || opts.prefix + opts.name + nonce++;
-      params[callbackProp] = callbackName;
+      callbackName = opts.callbackName || "jp" + nonce++;
     } else {
       callbackName = params[callbackProp];
     }
+    params[callbackProp] = !!callbackNamespase
+      ? `${callbackNamespase}.${callbackName}`
+      : callbackName;
   }
 
   let script;
@@ -98,7 +107,7 @@ function httpJsonp(options, receive) {
     if (!opts.keepScriptTag) {
       if (script.parentNode) script.parentNode.removeChild(script);
     }
-    if (callbackName) script_oncallback(callbackName, noop);
+    if (callbackName) script_oncallback(callbackNamespase, callbackName, noop);
     script_onload(script, noop);
     script_onerror(script, noop);
     if (timer) clearTimeout(timer);
@@ -106,7 +115,7 @@ function httpJsonp(options, receive) {
 
   function cancel() {
     state = "cancel";
-    if (script_oncallback(callbackName)) cleanup();
+    if (script_oncallback(callbackNamespase, callbackName)) cleanup();
   }
 
   const timeout = opts.timeout;
@@ -133,8 +142,9 @@ function httpJsonp(options, receive) {
   }
 
   if (callbackName) {
-    script_oncallback(callbackName, function(data) {
+    script_oncallback(callbackNamespase, callbackName, function(data) {
       state = "callback";
+      cleanup();
       rec.callback && rec.callback(data);
     });
   }

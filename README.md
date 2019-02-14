@@ -103,14 +103,16 @@ Requests can be made by passing the relevant options to `httpJsonp`.
   params: {},
 
   // `callbackProp` Specify which key in `params` is the callback behavior interface.
-  // If a key value in `params` is specified, the specified value overrides the default random name of `httpJsonp`
+  // If a key value in `params` is specified, the specified value overrides the default random name of `callbackName`
   callbackProp: "callback", // default
 
-  // Callback name prefix.
-  prefix: "__httpJsonp",
+  // `callbackNamespase` Namespace before callback name
+  // exmaple：
+  //   "__httpJsonpCallback" = window.__httpJsonpCallback = {}
+  callbackNamespase: "__httpJsonpCallback", // default
 
-  // Callback name. (Default callback name = `prefix`+`name`+random number)
-  name: "Callback",
+  // `callbackName` Callback name. (If not specified, a name is randomly generated)
+  callbackName: "",
 
   // `timeout` specifies the number of milliseconds before the request times out.
   timeout: 60000, // default
