@@ -1,1 +1,1 @@
-__httpJsonpCallback001({ data: "hello" });
+__httpJsonpCallback.jp001({ data: "hello" });

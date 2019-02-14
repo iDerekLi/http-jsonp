@@ -12,9 +12,10 @@
     baseURL: "./",
     url: "./jsonpdata.js",
     params: {
-      callback: "__httpJsonpCallback001"
+      callback: "jp001"
     },
     callbackProp: "callback",
+    callbackNamespase: "__httpJsonpCallback",
     callback: function(data) {
       console.log("callback", data);
     },
