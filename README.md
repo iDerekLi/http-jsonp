@@ -24,7 +24,7 @@ A JSONP cross-origin request library
 Using npm:
 
 ```shell
-$ npm install http-jsonp
+$ npm install --save http-jsonp
 ```
 
 or Yarn:
