@@ -1,5 +1,5 @@
 /*!
- * httpJsonp v1.1.0
+ * httpJsonp v1.1.1
  * 
  * Copyright (c) 2019-present Derek Li
  * Released under the MIT License - https://choosealicense.com/licenses/mit/
@@ -16,6 +16,8 @@ function _extends() {
         return e;
     }).apply(this, arguments);
 }
+
+var e = "1.1.1";
 
 /**
  * deepMerge
@@ -91,15 +93,15 @@ function queryParams(e, r) {
     return t.length ? r + t.join("&") : "";
 }
 
-var e = {
+var r = {
     baseURL: "",
     // 将被添加到`url`
     url: "",
     // 是将用于请求的服务器URL
     params: {},
     // 请求服务器url所带参数（包括callback行为）
-    callbackProp: "callback",
-    // 指定`params`中哪一个键是callback行为接口，（如果指定`params`中的键值存在则指定的值覆盖httpJsonp默认随机名称）
+    callbackProp: !1,
+    // [false | callbackProp], 当为false时只作为脚本请求 // 指定`params`中哪一个键是callback行为接口，（如果指定`params`中的键值存在则指定的值覆盖httpJsonp默认随机名称）
     callbackNamespase: "__httpJsonpCallback",
     // window.callbackNamespase
     callbackName: "",
@@ -120,8 +122,14 @@ var e = {
     // 当callback被触发时要调用的函数。
     load: null,
     // 请求加载完成时调用的函数。
-    error: null
-}, r = Date.now();
+    error: null,
+    // 请求失败时调用的函数。
+    complete: null,
+    // 无论请求成功或失败均调用
+    then: null,
+    "catch": null,
+    "finally": null
+}, t = Date.now();
 
 /**
  * Callback nonce.
@@ -133,18 +141,18 @@ function noop() {}
 
 /**
  * Script event
- */ var t = function script_oncallback(e, r, t) {
+ */ var n = function script_oncallback(e, r, t) {
     var n = treeAttribute(window, e);
     if (n = e && !n ? treeAttribute(window, e, {}) : n || window, !t) return n[r];
     n[r] = t;
-}, n = function script_onload(e, r) {
+}, o = function script_onload(e, r) {
     e.onload !== undefined ? e.onload = function() {
         r();
     } : e.onreadystatechange = function() {
         "loaded" != e.readyState && "complete" != e.readyState || (e.onreadystatechange = null, 
         r());
     };
-}, o = function script_onerror(e, r) {
+}, a = function script_onerror(e, r) {
     e.onerror = r;
 };
 
@@ -154,46 +162,49 @@ function noop() {}
  * @param [receive]
  * @returns {{cancel: cancel}}
  */
-function httpJsonp(a, c) {
-    "string" == typeof a && (a = {
-        url: a
+function httpJsonp(e, c) {
+    "string" == typeof e && (e = {
+        url: e
     }), c || (c = {});
-    var l, i, u = deepMerge({}, e, a || {}), p = _extends({
-        callback: u.callback,
-        load: u.load,
-        error: u.error
-    }, c), s = u.params, f = "", d = "", b = u.callbackNamespase, m = u.callbackProp;
+    var l, i, p = deepMerge({}, r, e || {}), u = _extends({
+        callback: p.callback,
+        load: p.load,
+        error: p.error,
+        complete: p.complete
+    }, c), s = p.params, f = "", d = "", m = p.callbackNamespase, b = p.callbackProp;
     function cleanup() {
-        u.keepScriptTag || l.parentNode && l.parentNode.removeChild(l), d && t(b, d, noop), 
-        n(l, noop), o(l, noop), i && clearTimeout(i);
+        p.keepScriptTag || l.parentNode && l.parentNode.removeChild(l), d && n(m, d, noop), 
+        o(l, noop), a(l, noop), i && clearTimeout(i);
     }
     function cancel() {
-        f = "cancel", t(b, d) && cleanup();
+        f = "cancel", n(m, d) && cleanup();
     }
-    m && "" !== s[m] && (
+    b && "" !== s[b] && (
     // create callback
-    d = s[m] ? s[m] : u.callbackName || "jp" + r++, s[m] = b ? b + "." + d : d);
-    var y = u.timeout;
+    d = s[b] ? s[b] : p.callbackName || "jp" + t++, s[b] = m ? m + "." + d : d);
+    var y = p.timeout;
     y && (i = setTimeout(function() {
-        f = "error", cleanup(), p.error && p.error(new Error("Request Timeout"));
+        f = "error", cleanup(), u.error && u.error(new Error("Request Timeout")), u.complete && u.complete();
     }, y));
  // qs
-        var g = u.baseURL + u.url;
-    g = (g += queryParams(s, ~g.indexOf("?") ? "&" : "?")).replace("?&", "?"), // create script
+        var h = p.baseURL + p.url;
+    h = (h += queryParams(s, ~h.indexOf("?") ? "&" : "?")).replace("?&", "?"), // create script
     l = document.createElement("script");
-    var h = u.scriptAttr;
-    for (var v in delete h.text, delete h.src, h) l[v] = h[v];
-    d && t(b, d, function(e) {
-        f = "callback", cleanup(), p.callback && p.callback(e);
-    }), n(l, function() {
-        cleanup(), "error" !== f && (f = "load", p.load && p.load());
-    }), o(l, function() {
-        f = "error", cleanup(), p.error && p.error(new Error("script error"));
-    }), l.src = g;
+    var g = p.scriptAttr;
+    for (var v in delete g.text, delete g.src, g) l[v] = g[v];
+    d ? n(m, d, function(e) {
+        cleanup(), "error" !== f && (f = "callback", u.callback && u.callback(e), u.complete && u.complete());
+    }) : o(l, function() {
+        cleanup(), "error" !== f && (f = "load", u.load && u.load(), u.complete && u.complete());
+    }), a(l, function() {
+        f = "error", cleanup(), u.error && u.error(new Error("script error")), u.complete && u.complete();
+    }), l.src = h;
     var k = document.getElementsByTagName("script")[0] || document.head || document.getElementsByTagName("head")[0];
     return k.parentNode.insertBefore(l, k), {
         cancel: cancel
     };
 }
+
+httpJsonp.version = e;
 
 export default httpJsonp;

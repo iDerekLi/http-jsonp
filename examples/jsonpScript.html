@@ -14,7 +14,6 @@
     params: {
       v: "1.0"
     },
-    callbackProp: false,
     scriptAttr: {
       type: "text/javascript"
     },
@@ -23,6 +22,9 @@
     },
     error: function(err) {
       console.log(err);
+    },
+    complete: function () {
+      console.log("complete");
     }
   });
 </script>

@@ -5,15 +5,15 @@
 [![npm downloads](https://img.shields.io/npm/dm/http-jsonp.svg?style=flat-square)](https://www.npmjs.com/package/http-jsonp)
 [![npm license](https://img.shields.io/npm/l/http-jsonp.svg?style=flat-square)](https://github.com/iderekli/http-jsonp)
 
-* [简体中文](./README.zh.md)
+* [English](./README.md)
 
-A JSONP cross-origin request library
+JSONP跨域请求库
 
-## Features
+## 特征
 
-- Supports the Requests the Script
-- State callback
-- Cancel requests
+- 支持请求script js
+- 状态回调
+- 取消请求
 
 ## Browser Support
 
@@ -21,29 +21,29 @@ A JSONP cross-origin request library
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ | 7+ ✔ |
 
-## Installation
+## 安装
 
-Using npm:
+使用npm：
 
 ```shell
 $ npm install --save http-jsonp
 ```
 
-or Yarn:
+使用Yarn：
 
 ```shell
 $ yarn add http-jsonp
 ```
 
-Using cdn:
+CDN：
 
 ```html
 <script type="text/javascript" src="https://unpkg.com/http-jsonp/dist/http-jsonp.min.js"></script>
 ```
 
-## Example
+## 示例
 
-Performing a `JsonpCallbck` request
+一个 `JsonpCallbck` 请求：
 
 ```javascript
 import httpJsonp from "http-jsonp";
@@ -66,7 +66,7 @@ httpJsonp({
 });
 ```
 
-Performing a `script` request
+一个 `script` 请求：
 
 ```javascript
 import httpJsonp from "http-jsonp";
@@ -90,7 +90,7 @@ httpJsonp({
 
 ## httpJsonp API
 
-Requests can be made by passing the relevant options to `httpJsonp`.
+可以通过将相关选项传递给 `httpJsonp` 来进行请求
 
 ##### httpJsonp(options)
 
@@ -98,31 +98,31 @@ Requests can be made by passing the relevant options to `httpJsonp`.
 
 ```javascript
 {
-  // `baseURL` will be prepended to `url` unless `url` is absolute.
+  // `baseURL`将被添加到`url`，除非`url`是绝对的。
   baseURL: "", // baseURL: "https://example.com/api/"
 
-  // `url` is the server URL that will be used for the request.
+  // `url`是将用于请求的服务器URL。
   url: "", // url: "/jsonpdata"
 
-  // `params` are the URL parameters to be sent with the request.(Includes Callback behavior)
+  // `params`是随请求一起发送的URL参数。（包括回调行为）
   params: {},
 
-  // `callbackProp` Specify which key in `params` is the callback behavior interface.
-  // If a key value in `params` is specified, the specified value overrides the default random name of `callbackName`
+  // `callbackProp` 指定 `params` 中的哪个键作为Callback接口。
+  // 如果指定了 `params` 中一个存在的键值，则指定的值将覆盖默认的随机名称 `callbackName`
   callbackProp: false, // default [false, callbackProp]
 
-  // `callbackNamespase` Namespace before callback name
+  // `callbackNamespase` Callback名称前的命名空间
   // exmaple：
   //   "__httpJsonpCallback" = window.__httpJsonpCallback = {}
   callbackNamespase: "__httpJsonpCallback", // default
 
-  // `callbackName` Callback name. (If not specified, a name is randomly generated)
+  // `callbackName` Callback名称。 （如果未指定，则随机生成名称）
   callbackName: "",
 
-  // `timeout` specifies the number of milliseconds before the request times out.
+  // `timeout` 指定请求超时时间（毫秒）。
   timeout: 60000, // default
 
-  // script attribute
+  // 脚本属性
   scriptAttr: {
     type: "",
     charset: "",
@@ -131,21 +131,21 @@ Requests can be made by passing the relevant options to `httpJsonp`.
     defer: false
   },
 
-  // Does the script tag remain when the request is completed.
+  // 无痕请求（请求完成后脚本标记是否保留）。
   keepScriptTag: false,
 
   // callbackProp = "callback"
-  // When callbackProp exists, A function to be called if the callback is triggered.
+  // 当 callbackProp 存在时，如果请求加载完成则要调用的函数。
   callback: null,
 
   // callbackProp = false
-  // When callbackProp is false, A function to be called if the request load complete.
+  // 当callbackProp为false时，如果请求加载完成则要调用的函数。
   load: null,
 
-  // A function to be called if the request fails.
+  // 请求失败时要调用的函数。
   error: null,
   
-  // A function to be called when the request finishes (after success and error callbacks are executed).
+  // 无论请求成功或者失败都调用都函数。
   complete: null
 }
 ```

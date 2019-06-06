@@ -1,6 +1,6 @@
 {
   "name": "http-jsonp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A JSONP cross-origin request library",
   "main": "dist/http-jsonp.js",
   "module": "dist/http-jsonp.esm.js",
