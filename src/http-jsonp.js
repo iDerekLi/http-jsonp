@@ -1,10 +1,11 @@
+import { version } from "../package.json";
 import { deepMerge, treeAttribute, queryParams } from "./utils";
 
 const DEFAULT_OPTS = {
   baseURL: "", // 将被添加到`url`
   url: "", // 是将用于请求的服务器URL
   params: {}, // 请求服务器url所带参数（包括callback行为）
-  callbackProp: "callback", // 指定`params`中哪一个键是callback行为接口，（如果指定`params`中的键值存在则指定的值覆盖httpJsonp默认随机名称）
+  callbackProp: false, // [false | callbackProp], 当为false时只作为脚本请求 // 指定`params`中哪一个键是callback行为接口，（如果指定`params`中的键值存在则指定的值覆盖httpJsonp默认随机名称）
   callbackNamespase: "__httpJsonpCallback", // window.callbackNamespase
   callbackName: "", // callback名称，（callbackName=jp随机数）
   timeout: 60000, // 指定请求超时之前的毫秒数。
@@ -19,7 +20,11 @@ const DEFAULT_OPTS = {
   keepScriptTag: false, // 请求完成时是否保留脚本标记
   callback: null, // 当callback被触发时要调用的函数。
   load: null, // 请求加载完成时调用的函数。
-  error: null // 请求失败时调用的函数。
+  error: null, // 请求失败时调用的函数。
+  complete: null, // 无论请求成功或失败均调用
+  then: null,
+  catch: null,
+  finally: null
 };
 
 /**
@@ -79,6 +84,7 @@ function httpJsonp(options, receive) {
     callback: opts.callback,
     load: opts.load,
     error: opts.error,
+    complete: opts.complete,
     ...receive
   };
   let params = opts.params;
@@ -124,6 +130,7 @@ function httpJsonp(options, receive) {
       state = "error";
       cleanup();
       rec.error && rec.error(new Error("Request Timeout"));
+      rec.complete && rec.complete();
     }, timeout);
   }
 
@@ -143,22 +150,28 @@ function httpJsonp(options, receive) {
 
   if (callbackName) {
     script_oncallback(callbackNamespase, callbackName, function(data) {
-      state = "callback";
       cleanup();
-      rec.callback && rec.callback(data);
+      if (state !== "error") {
+        state = "callback";
+        rec.callback && rec.callback(data);
+        rec.complete && rec.complete();
+      }
+    });
+  } else {
+    script_onload(script, function() {
+      cleanup();
+      if (state !== "error") {
+        state = "load";
+        rec.load && rec.load();
+        rec.complete && rec.complete();
+      }
     });
   }
-  script_onload(script, function() {
-    cleanup();
-    if (state !== "error") {
-      state = "load";
-      rec.load && rec.load();
-    }
-  });
   script_onerror(script, function() {
     state = "error";
     cleanup();
     rec.error && rec.error(new Error("script error"));
+    rec.complete && rec.complete();
   });
 
   script.src = _url;
@@ -173,5 +186,7 @@ function httpJsonp(options, receive) {
     cancel
   };
 }
+
+httpJsonp.version = version;
 
 export default httpJsonp;

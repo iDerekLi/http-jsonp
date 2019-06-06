@@ -11,11 +11,10 @@
   httpJsonp({
     baseURL: "./",
     url: "./jsonpdata.js",
-    params: {
-      callback: "jp001"
-    },
+    params: {},
     callbackProp: "callback",
     callbackNamespase: "__httpJsonpCallback",
+    callbackName: "jp001",
     callback: function(data) {
       console.log("callback", data);
     },
@@ -23,7 +22,10 @@
       console.log("load");
     },
     error: function(err) {
-      console.log(err);
+      console.log("error");
+    },
+    complete: function () {
+      console.log("complete");
     }
   });
 </script>

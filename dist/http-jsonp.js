@@ -1,24 +1,25 @@
 /*!
- * httpJsonp v1.1.0
+ * httpJsonp v1.1.1
  * 
  * Copyright (c) 2019-present Derek Li
  * Released under the MIT License - https://choosealicense.com/licenses/mit/
  * 
  * https://github.com/iDerekLi/http-jsonp
  */
-!function(e, r) {
-    "object" == typeof exports && "undefined" != typeof module ? module.exports = r() : "function" == typeof define && define.amd ? define(r) : (e = e || self).httpJsonp = r();
+!function(e, t) {
+    "object" == typeof exports && "undefined" != typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define(t) : (e = e || self).httpJsonp = t();
 }(this, function() {
     "use strict";
     function _extends() {
         return (_extends = Object.assign || function(e) {
-            for (var r = 1; r < arguments.length; r++) {
-                var t = arguments[r];
-                for (var n in t) Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n]);
+            for (var t = 1; t < arguments.length; t++) {
+                var r = arguments[t];
+                for (var n in r) Object.prototype.hasOwnProperty.call(r, n) && (e[n] = r[n]);
             }
             return e;
         }).apply(this, arguments);
     }
+    var e = "1.1.1";
     /**
    * deepMerge
    * @param target  {Object|Array}  merge target
@@ -44,14 +45,14 @@
   };
   console.log(deepMerge(obj, obj1, obj2));
   */    function deepMerge(e) {
-        function assignItem(r, t) {
-            if ("object" == typeof e[t] && "object" == typeof r) e[t] = deepMerge(e[t], r); else if ("object" == typeof r && null !== r) {
-                var n = "[object Array]" === Object.prototype.toString.call(r) ? [] : {};
-                e[t] = deepMerge(n, r);
-            } else e[t] = r;
+        function assignItem(t, r) {
+            if ("object" == typeof e[r] && "object" == typeof t) e[r] = deepMerge(e[r], t); else if ("object" == typeof t && null !== t) {
+                var n = "[object Array]" === Object.prototype.toString.call(t) ? [] : {};
+                e[r] = deepMerge(n, t);
+            } else e[r] = t;
         }
-        for (var r = arguments.length, t = new Array(r > 1 ? r - 1 : 0), n = 1; n < r; n++) t[n - 1] = arguments[n];
-        for (var o = 0, a = t.length; o < a; o++) for (var c in t[o]) assignItem(t[o][c], c);
+        for (var t = arguments.length, r = new Array(t > 1 ? t - 1 : 0), n = 1; n < t; n++) r[n - 1] = arguments[n];
+        for (var o = 0, a = r.length; o < a; o++) for (var c in r[o]) assignItem(r[o][c], c);
         return e;
     }
     /**
@@ -60,44 +61,44 @@
    * @param attrPath
    * @param value
    * @returns {*}
-   */    function treeAttribute(e, r, t) {
+   */    function treeAttribute(e, t, r) {
         if ("object" != typeof e || null === e) throw Error("obj is not an Object type");
-        if (!r) return e;
-        var n = "string" == typeof r ? r.split(".") : r, o = n.length, a = n.shift();
+        if (!t) return e;
+        var n = "string" == typeof t ? t.split(".") : t, o = n.length, a = n.shift();
         if ("string" != typeof a || "" === a) throw Error("error attribute path");
-        return o > 1 ? treeAttribute(e[a], n, t) : t !== undefined ? e[a] = t : e[a];
+        return o > 1 ? treeAttribute(e[a], n, r) : r !== undefined ? e[a] = r : e[a];
     }
     /**
    * 对象转url参数
    * @param data 格式化对象
    * @param prefix 前缀 ["?" | "&" | "" | true | false]
    * @returns {string}
-   */    function includes(e, r) {
-        for (var t in r) if (e === r[t]) return !0;
+   */    function includes(e, t) {
+        for (var r in t) if (e === t[r]) return !0;
         return !1;
     }
-    function queryParams(e, r) {
-        void 0 === r && (r = ""), r = "boolean" == typeof r ? "?" : r;
-        var t = [], n = function _loop(r) {
-            var n = e[r];
+    function queryParams(e, t) {
+        void 0 === t && (t = ""), t = "boolean" == typeof t ? "?" : t;
+        var r = [], n = function _loop(t) {
+            var n = e[t];
  // 去掉为空的参数
                         if (includes(n, [ "", undefined, null ])) return "continue";
             n.constructor === Array ? n.forEach(function(e) {
-                t.push(encodeURIComponent(r) + "[]=" + encodeURIComponent(e));
-            }) : t.push(encodeURIComponent(r) + "=" + encodeURIComponent(n));
+                r.push(encodeURIComponent(t) + "[]=" + encodeURIComponent(e));
+            }) : r.push(encodeURIComponent(t) + "=" + encodeURIComponent(n));
         };
         for (var o in e) n(o);
-        return t.length ? r + t.join("&") : "";
+        return r.length ? t + r.join("&") : "";
     }
-    var e = {
+    var t = {
         baseURL: "",
         // 将被添加到`url`
         url: "",
         // 是将用于请求的服务器URL
         params: {},
         // 请求服务器url所带参数（包括callback行为）
-        callbackProp: "callback",
-        // 指定`params`中哪一个键是callback行为接口，（如果指定`params`中的键值存在则指定的值覆盖httpJsonp默认随机名称）
+        callbackProp: !1,
+        // [false | callbackProp], 当为false时只作为脚本请求 // 指定`params`中哪一个键是callback行为接口，（如果指定`params`中的键值存在则指定的值覆盖httpJsonp默认随机名称）
         callbackNamespase: "__httpJsonpCallback",
         // window.callbackNamespase
         callbackName: "",
@@ -118,7 +119,13 @@
         // 当callback被触发时要调用的函数。
         load: null,
         // 请求加载完成时调用的函数。
-        error: null
+        error: null,
+        // 请求失败时调用的函数。
+        complete: null,
+        // 无论请求成功或失败均调用
+        then: null,
+        "catch": null,
+        "finally": null
     }, r = Date.now();
     /**
    * Callback nonce.
@@ -129,19 +136,19 @@
     function noop() {}
     /**
    * Script event
-   */    var t = function script_oncallback(e, r, t) {
+   */    var n = function script_oncallback(e, t, r) {
         var n = treeAttribute(window, e);
-        if (n = e && !n ? treeAttribute(window, e, {}) : n || window, !t) return n[r];
-        n[r] = t;
-    }, n = function script_onload(e, r) {
+        if (n = e && !n ? treeAttribute(window, e, {}) : n || window, !r) return n[t];
+        n[t] = r;
+    }, o = function script_onload(e, t) {
         e.onload !== undefined ? e.onload = function() {
-            r();
+            t();
         } : e.onreadystatechange = function() {
             "loaded" != e.readyState && "complete" != e.readyState || (e.onreadystatechange = null, 
-            r());
+            t());
         };
-    }, o = function script_onerror(e, r) {
-        e.onerror = r;
+    }, a = function script_onerror(e, t) {
+        e.onerror = t;
     };
     /**
    * httpJsonp
@@ -149,46 +156,47 @@
    * @param [receive]
    * @returns {{cancel: cancel}}
    */
-    function httpJsonp(a, c) {
-        "string" == typeof a && (a = {
-            url: a
+    function httpJsonp(e, c) {
+        "string" == typeof e && (e = {
+            url: e
         }), c || (c = {});
-        var l, i, u = deepMerge({}, e, a || {}), p = _extends({
-            callback: u.callback,
-            load: u.load,
-            error: u.error
-        }, c), f = u.params, s = "", d = "", b = u.callbackNamespase, m = u.callbackProp;
+        var l, i, p = deepMerge({}, t, e || {}), u = _extends({
+            callback: p.callback,
+            load: p.load,
+            error: p.error,
+            complete: p.complete
+        }, c), s = p.params, f = "", d = "", m = p.callbackNamespase, b = p.callbackProp;
         function cleanup() {
-            u.keepScriptTag || l.parentNode && l.parentNode.removeChild(l), d && t(b, d, noop), 
-            n(l, noop), o(l, noop), i && clearTimeout(i);
+            p.keepScriptTag || l.parentNode && l.parentNode.removeChild(l), d && n(m, d, noop), 
+            o(l, noop), a(l, noop), i && clearTimeout(i);
         }
         function cancel() {
-            s = "cancel", t(b, d) && cleanup();
+            f = "cancel", n(m, d) && cleanup();
         }
-        m && "" !== f[m] && (
+        b && "" !== s[b] && (
         // create callback
-        d = f[m] ? f[m] : u.callbackName || "jp" + r++, f[m] = b ? b + "." + d : d);
-        var y = u.timeout;
+        d = s[b] ? s[b] : p.callbackName || "jp" + r++, s[b] = m ? m + "." + d : d);
+        var y = p.timeout;
         y && (i = setTimeout(function() {
-            s = "error", cleanup(), p.error && p.error(new Error("Request Timeout"));
+            f = "error", cleanup(), u.error && u.error(new Error("Request Timeout")), u.complete && u.complete();
         }, y));
  // qs
-                var g = u.baseURL + u.url;
-        g = (g += queryParams(f, ~g.indexOf("?") ? "&" : "?")).replace("?&", "?"), // create script
+                var h = p.baseURL + p.url;
+        h = (h += queryParams(s, ~h.indexOf("?") ? "&" : "?")).replace("?&", "?"), // create script
         l = document.createElement("script");
-        var h = u.scriptAttr;
-        for (var v in delete h.text, delete h.src, h) l[v] = h[v];
-        d && t(b, d, function(e) {
-            s = "callback", cleanup(), p.callback && p.callback(e);
-        }), n(l, function() {
-            cleanup(), "error" !== s && (s = "load", p.load && p.load());
-        }), o(l, function() {
-            s = "error", cleanup(), p.error && p.error(new Error("script error"));
-        }), l.src = g;
+        var g = p.scriptAttr;
+        for (var v in delete g.text, delete g.src, g) l[v] = g[v];
+        d ? n(m, d, function(e) {
+            cleanup(), "error" !== f && (f = "callback", u.callback && u.callback(e), u.complete && u.complete());
+        }) : o(l, function() {
+            cleanup(), "error" !== f && (f = "load", u.load && u.load(), u.complete && u.complete());
+        }), a(l, function() {
+            f = "error", cleanup(), u.error && u.error(new Error("script error")), u.complete && u.complete();
+        }), l.src = h;
         var k = document.getElementsByTagName("script")[0] || document.head || document.getElementsByTagName("head")[0];
         return k.parentNode.insertBefore(l, k), {
             cancel: cancel
         };
     }
-    return httpJsonp;
+    return httpJsonp.version = e, httpJsonp;
 });
